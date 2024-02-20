@@ -4,6 +4,8 @@ const app = require("../src/app");
 
 const database = require("../databases");
 
+afterAll(() => database.end());
+
 describe("GET /api/movies", () => {
   it("should return all movies", async () => {
     const response = await request(app).get("/api/movies");
@@ -67,7 +69,7 @@ it("should return an error", async () => {
     .post("/api/movies")
     .send(movieWithMissingProps);
 
-  expect(response.status).toEqual(400);
+  expect(response.status).toEqual(422);
 });
 });
 
@@ -132,7 +134,7 @@ describe("PUT /api/movies/:id", () => {
         .put(`/api/movies/1`)
         .send(movieWithMissingProps);
   
-      expect(response.status).toEqual(500);
+      expect(response.status).toEqual(422);
     });    
 
       it("should return no movie", async () => {

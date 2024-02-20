@@ -2,8 +2,11 @@ const request = require("supertest");
 const app = require("../src/app");
 const database = require('../databases');
 
-afterAll(() => database.end());
+const crypto = require('crypto');
 
+
+afterAll(async() => { await database.end();
+});
 
 describe("GET /api/users", () => {
   it("should return all users", async () => {
@@ -67,7 +70,7 @@ describe("POST /api/users", () => {
       .post("/api/users")
       .send(userWithMissingProps);
 
-    expect(response.status).toEqual(400);
+    expect(response.status).toEqual(422);
   });
 });
 
@@ -128,10 +131,10 @@ describe("POST /api/users", () => {
         const userWithMissingProps = { firstname: "Monica" };
     
         const response = await request(app)
-          .put(`/api/user/1`)
+          .put(`/api/users/1`)
           .send(userWithMissingProps);
     
-        expect(response.status).toEqual(404);
+        expect(response.status).toEqual(422);
       });    
   
         it("should return no user", async () => {

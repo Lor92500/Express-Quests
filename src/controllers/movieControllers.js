@@ -57,23 +57,21 @@ const getMovieById = (req, res) => {
     });
 };
 
-const postMovie = async (req, res) => {
+const postMovie = (req, res) => {
   const { title, director, year, color, duration } = req.body;
 
-  if (!title || !director || !year || color == null || !duration) {
-    return res.status(400).json({ message: "All fields are required." });
-  }
-
-  try {
-    const [result] = await database.query(
+  database
+    .query(
       "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
       [title, director, year, color, duration]
-    );
-    res.status(201).json({ id: result.insertId });
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
-  }
+    )
+    .then(([result]) => {
+      res.status(201).send({ id: result.insertId });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
 };
 
 const putMovie = (req,res) => {

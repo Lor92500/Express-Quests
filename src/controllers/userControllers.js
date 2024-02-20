@@ -32,24 +32,23 @@ const getUsers = (req, res) => {
       });
   };
   
-  const postUser = async (req, res) => {
-      const { firstname, lastname, email, city, language } = req.body;
+  const postUser = (req, res) => {
+    const { firstname, lastname, email, city, language } = req.body;
   
-      if (!firstname || !lastname || !email) {
-          return res.status(400).json({ message: "Firstname, lastname, and email are required." });
-      }
-  
-      try {
-        const [result] = await database.query(
-          "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
-          [firstname, lastname, email, city, language]
-        );
-        res.status(201).json({ id: result.insertId });
-      } catch (err) {
+    database
+      .query(
+        "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
+        [firstname, lastname, email, city, language]
+      )
+      .then(([result]) => {
+        res.status(201).send({ id: result.insertId });
+      })
+      .catch((err) => {
         console.error(err);
         res.sendStatus(500);
-      }
-  };
+      });
+  }
+
   const putUser = (req,res) => {
     const id = parseInt(req.params.id);
     const { firstname, lastname, email, city, language } = req.body;
